@@ -91,8 +91,8 @@ Las pruebas automáticas (`tests/`) incluyen pruebas **negativas**: verifican qu
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/karenmoreno1805/NOMBRE-DEL-REPOSITORIO.git
-cd NOMBRE-DEL-REPOSITORIO
+git clone https://github.com/karenmoreno1805/Proyecto-Fundamentos-de-integraci-n-y-transformaci-n-de-los-datos.git
+cd Proyecto-Fundamentos-de-integraci-n-y-transformaci-n-de-los-datos
 
 # 2. (Opcional) crear un entorno virtual
 python -m venv .venv
@@ -109,11 +109,13 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### En Google Colab
+### En Google Colab (recomendado para la demostración)
+
+Abre `notebooks/Ejecutar_Pipeline_Colab.ipynb` en Colab y ejecuta las celdas en orden (**Entorno de ejecución → Ejecutar todo**). El cuaderno clona el repositorio desde cero, instala las dependencias, ejecuta el pipeline, muestra el dataset integrado y corre las pruebas. También se puede hacer a mano:
 
 ```python
-!git clone https://github.com/karenmoreno1805/NOMBRE-DEL-REPOSITORIO.git
-%cd NOMBRE-DEL-REPOSITORIO
+!git clone https://github.com/karenmoreno1805/Proyecto-Fundamentos-de-integraci-n-y-transformaci-n-de-los-datos.git
+%cd Proyecto-Fundamentos-de-integraci-n-y-transformaci-n-de-los-datos
 !pip install -r requirements.txt
 !python main.py
 ```
@@ -141,7 +143,7 @@ python -m unittest discover tests -v
 │   ├── raw/             # Fuentes originales (COMFATOLIMA.xlsx, dane.xlsx) - no se modifican
 │   └── processed/       # Datasets limpios generados por el pipeline
 ├── docs/                # Informe del Avance 1 y diccionario de datos
-├── notebooks/           # Avance 1 y Avance 2 (exploración original en Colab)
+├── notebooks/           # Avance 1, Avance 2 y Ejecutar_Pipeline_Colab (demostración desde cero)
 ├── outputs/             # Dataset integrado y reporte de calidad
 ├── src/
 │   ├── config.py        # Rutas, umbrales y reglas de negocio
@@ -151,7 +153,7 @@ python -m unittest discover tests -v
 │   ├── integracion.py   # 4. Integrar
 │   ├── validacion.py    # 5. Validar
 │   └── reporte.py       # Reporte de calidad en Markdown
-├── tests/               # Pruebas automáticas con datos sintéticos
+├── tests/               # Pruebas automáticas (datos_prueba.py genera datos sintéticos)
 ├── main.py              # Punto de entrada: python main.py
 ├── requirements.txt
 └── README.md
@@ -164,9 +166,39 @@ python -m unittest discover tests -v
 - **Salarios estimados:** el punto medio del rango es una aproximación; "Mayor de $15.000.001" se estima con su límite inferior (conservador).
 - **Experiencia > 120 meses:** se trata como error de captura y se deja como "no informado".
 - **Corrección de codificación:** cuando un byte se perdió por completo (`Ã�`), la letra original es ambigua; se asume `Í`, el caso más frecuente en los datos.
+- **Ceros en el archivo del DANE:** la Tasa de Subocupación de 2020 y el indicador *Fuerza de trabajo potencial* vienen con valor 0 en el archivo original; el pipeline los conserva tal cual y no afectan la integración (se usa 2025).
 - **Municipios:** la validación usa los 47 municipios del Tolima (ya no una lista fija de 4).
 
-## 11. Historial del proyecto
+## 11. Resultados de la ejecución con los datos reales
+
+Ejecutando `python main.py` con los archivos originales de `data/raw/`:
+
+| Etapa | Resultado |
+|---|---|
+| Carga | COMFATOLIMA: 1.000 filas x 20 columnas; DANE: 16 filas x 20 columnas |
+| T1 - Codificación | 369 celdas de texto corregidas (por ejemplo `ALMACÃ‰N` pasa a `ALMACÉN`) |
+| T2 - Duplicados y outliers | 2 vacantes duplicadas eliminadas (quedan 998); 164 valores de experiencia > 120 meses pasan a nulo |
+| T3 - Salario | 812 de 998 vacantes con salario numérico estimado (el resto es "A Convenir" o sin rango) |
+| T4 - DANE | 13 indicadores x 19 años (2007-2025) = 247 registros |
+| T5 - Tolima | 11 vacantes del Tolima (67 plazas de trabajo) |
+| Integración | 11 filas x 36 columnas: cada vacante con los 13 indicadores del DANE de 2025 |
+| Validaciones | 20 de 20 aprobadas |
+
+El detalle completo (antes vs. después) queda en `outputs/reporte_calidad.md`.
+
+## 12. Participación del equipo
+
+El proyecto lo desarrollan tres integrantes. Los tres figuran como autoras del Avance 1 y del Avance 2 (`notebooks/` e informe en `docs/`).
+
+| Integrante | Cuenta de GitHub | Aporte |
+|---|---|---|
+| Karen Natalia Moreno Bermúdez | `karenmoreno1805` | Organización del repositorio y publicación del pipeline, los datos y la documentación |
+| María Fernanda Rodríguez | `mariarodriguez22-hub` | Aportes propios registrados en el historial de commits del repositorio |
+| Karen Vanesa Cardona | - | Coautora de los Avances 1 y 2 (notebooks e informe) |
+
+El historial de commits del repositorio (pestaña *Commits*) es la evidencia de las contribuciones de cada cuenta.
+
+## 13. Historial del proyecto
 
 - **Avance 1** (`notebooks/Avance_1_.ipynb`): definición del problema, extracción inicial, diccionario de datos y diagnóstico de calidad.
 - **Avance 2** (`notebooks/Avance_2_.ipynb`): primeras transformaciones y controles de calidad en notebook.
