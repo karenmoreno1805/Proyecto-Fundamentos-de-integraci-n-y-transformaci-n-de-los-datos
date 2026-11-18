@@ -170,14 +170,17 @@ def t4_normalizar_dane(df_raw: pd.DataFrame) -> pd.DataFrame:
     filtrar por año, que es justamente la llave para integrar con las vacantes, y
     deja explícita la unidad de cada indicador.
     """
-    primera = df_raw.columns[0]
-    es_encabezado = df_raw[primera].astype(str).str.strip().str.lower() == "concepto"
-    if not es_encabezado.any():
+    pos = None
+    for i in range(len(df_raw)):
+        valores = pd.to_numeric(df_raw.iloc[i, 1:], errors="coerce")
+        if len(valores) and valores.notna().all() and valores.between(1900, 2100).all():
+            pos = i
+            break
+    if pos is None:
         raise ValueError(
-            "No se encontró la fila de encabezado ('Concepto') en la matriz del DANE; "
+            "No se encontró la fila de años (2007, 2008, ...) en la matriz del DANE; "
             "revisa que la hoja y el formato del archivo sean los originales."
         )
-    pos = int(np.flatnonzero(es_encabezado.to_numpy())[0])
 
     anios = [str(int(a)) for a in df_raw.iloc[pos, 1:].tolist()]
     cuerpo = df_raw.iloc[pos + 1:].copy()
