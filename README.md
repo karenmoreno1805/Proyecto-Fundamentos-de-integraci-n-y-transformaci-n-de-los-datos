@@ -194,7 +194,7 @@ El proyecto lo desarrollan tres integrantes. Los tres figuran como autoras del A
 |---|---|---|
 | Karen Natalia Moreno Bermúdez | `karenmoreno1805` | Organización del repositorio y publicación del pipeline, los datos y la documentación |
 | María Fernanda Rodríguez | `mariarodriguez22-hub` | Aportes propios registrados en el historial de commits del repositorio |
-| Karen Vanesa Cardona | - | Coautora de los Avances 1 y 2 (notebooks e informe) |
+| Karen Vanesa Cardona | `karencardona-collab` | Coautora de los Avances 1 y 2 (notebooks e informe) |
 
 El historial de commits del repositorio (pestaña *Commits*) es la evidencia de las contribuciones de cada cuenta.
 
